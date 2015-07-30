@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function listip {
+	for vm in `docker ps|tail -n +2|awk '{print $NF}'`; 
+		do
+			ip=`docker inspect --format '{{ .NetworkSettings.IPAddress }}' $vm`;
+			echo "$ip  $vm";
+		done	
+
+}
+
+function updateip {
+
+        for vm in `docker ps|tail -n +2|awk '{print $NF}'`;
+                do
+                        echo "copy hosts file to  $vm";
+			docker exec -i $vm sh -c 'cat > /etc/hosts' < /mnt/sdcard/docker/bin/hosts
+                done
+
+
+}
+
+
+function entercontainer {
+	id=`docker ps -aq --filter="name=$1"`
+	echo $id;	
+	docker exec -ti $id /bin/bash
+}
+
+case "$1" in
+	enter)
+		#echo "$1 to $2"
+		entercontainer $2;
+		;;
+	uip)
+                listip > /tmp/hosts
+                echo "127.0.0.1 localhost" >> /tmp/hosts
+		updateip
+		;;
+esac
+

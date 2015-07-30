@@ -14,7 +14,7 @@ function updateip {
         for vm in `docker ps|tail -n +2|awk '{print $NF}'`;
                 do
                         echo "copy hosts file to  $vm";
-			docker exec -i $vm sh -c 'cat > /etc/hosts' < /mnt/sdcard/docker/bin/hosts
+			docker exec -i $vm sh -c 'cat > /etc/hosts' < /tmp/hosts
                 done
 
 
